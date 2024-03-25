@@ -1,4 +1,7 @@
-# Generative Adversarial Imitation Learning with PyTorch
+# My fork of: Generative Adversarial Imitation Learning with PyTorch
+I will be using this repository as a base off of which I will be wroking to improve the optimisation process for these sorts of problems.
+
+---
 
 This repository is for a simple implementation of Generative Adversarial Imitation Learning (GAIL) with PyTorch. This implementation is based on the original GAIL paper ([link](https://arxiv.org/abs/1606.03476)), and my Reinforcement Learning Collection repository ([link](https://github.com/hcnoh/rl-collection-pytorch)).
 
