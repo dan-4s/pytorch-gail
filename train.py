@@ -6,6 +6,8 @@ import argparse
 import torch
 import gym
 
+import wandb
+
 from models.nets import Expert
 from models.gail import GAIL
 
@@ -59,6 +61,13 @@ def main(env_name):
             os.path.join(expert_ckpt_path, "policy.ckpt"), map_location=device
         )
     )
+
+    # Initialise WandB
+    wandb.init(
+        project="GAIL_Project_{}".format(env_name),
+        tags=["GAIL"],
+        mode="online",
+    )# TODO: switch to hydra to specify the run name.
 
     model = GAIL(state_dim, action_dim, discrete, config).to(device)
 

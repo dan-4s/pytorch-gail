@@ -1,6 +1,14 @@
 # My fork of: Generative Adversarial Imitation Learning with PyTorch
 I will be using this repository as a base off of which I will be wroking to improve the optimisation process for these sorts of problems.
 
+## Installation Instructions circa March 25, 2024
+Installing the dependencies as outlined below did not work for me. Instead I have to do the following:
+```bash
+pip install swig
+pip install gym[box2d]
+```
+Following these installations, the rest can be installed easily, but beware of this bug.
+
 ---
 
 This repository is for a simple implementation of Generative Adversarial Imitation Learning (GAIL) with PyTorch. This implementation is based on the original GAIL paper ([link](https://arxiv.org/abs/1606.03476)), and my Reinforcement Learning Collection repository ([link](https://github.com/hcnoh/rl-collection-pytorch)).

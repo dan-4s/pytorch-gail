@@ -1,5 +1,7 @@
 import numpy as np
+import time
 import torch
+import wandb
 
 from torch.nn import Module
 
@@ -66,6 +68,7 @@ class GAIL(Module):
         exp_obs = []
         exp_acts = []
 
+        start_time = time.time()
         steps = 0
         while steps < num_steps_per_iter:
             ep_obs = []
@@ -74,9 +77,10 @@ class GAIL(Module):
             t = 0
             done = False
 
-            ob = env.reset()
+            ob, _ = env.reset()
 
             while not done and steps < num_steps_per_iter:
+                # breakpoint()
                 act = expert.act(ob)
 
                 ep_obs.append(ob)
@@ -85,7 +89,7 @@ class GAIL(Module):
 
                 if render:
                     env.render()
-                ob, rwd, done, info = env.step(act)
+                ob, rwd, done, info, _ = env.step(act)
 
                 ep_rwds.append(rwd)
 
@@ -103,10 +107,15 @@ class GAIL(Module):
             ep_obs = FloatTensor(np.array(ep_obs))
             ep_rwds = FloatTensor(ep_rwds)
 
+        # BUG: Figure out why this outputs nans here and below!!!
         exp_rwd_mean = np.mean(exp_rwd_iter)
         print(
             "Expert Reward Mean: {}".format(exp_rwd_mean)
         )
+        wandb.log({
+            "Expert Reward Mean": exp_rwd_mean,
+            "Time (minutes)": (time.time() - start_time) / 60,
+        })
 
         exp_obs = FloatTensor(np.array(exp_obs))
         exp_acts = FloatTensor(np.array(exp_acts))
@@ -134,7 +143,7 @@ class GAIL(Module):
                 t = 0
                 done = False
 
-                ob = env.reset()
+                ob, _ = env.reset()
 
                 while not done and steps < num_steps_per_iter:
                     act = self.act(ob)
@@ -147,7 +156,7 @@ class GAIL(Module):
 
                     if render:
                         env.render()
-                    ob, rwd, done, info = env.step(act)
+                    ob, rwd, done, info, _ = env.step(act)
 
                     ep_rwds.append(rwd)
                     ep_gms.append(gae_gamma ** t)
@@ -205,6 +214,10 @@ class GAIL(Module):
                 "Iterations: {},   Reward Mean: {}"
                 .format(i + 1, np.mean(rwd_iter))
             )
+            wandb.log({
+                "Agent Reward Mean": np.mean(rwd_iter),
+                "Time (minutes)": (time.time() - start_time) / 60,
+            })
 
             obs = FloatTensor(np.array(obs))
             acts = FloatTensor(np.array(acts))
