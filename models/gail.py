@@ -101,8 +101,9 @@ class GAIL(Module):
                         done = True
                         break
 
-            if done:
-                exp_rwd_iter.append(np.sum(ep_rwds))
+            # BUG: Fix to the NAN bug that we were experiencing.
+            # if done:
+            exp_rwd_iter.append(np.sum(ep_rwds))
 
             ep_obs = FloatTensor(np.array(ep_obs))
             ep_rwds = FloatTensor(ep_rwds)
@@ -170,8 +171,9 @@ class GAIL(Module):
                             done = True
                             break
 
-                if done:
-                    rwd_iter.append(np.sum(ep_rwds))
+                # BUG: Fix to the NAN bug.
+                # if done:
+                rwd_iter.append(np.sum(ep_rwds))
 
                 ep_obs = FloatTensor(np.array(ep_obs))
                 ep_acts = FloatTensor(np.array(ep_acts))

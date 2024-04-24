@@ -66,7 +66,7 @@ def main(env_name):
     wandb.init(
         project="GAIL_Project_{}".format(env_name),
         tags=["GAIL"],
-        mode="online",
+        mode="disabled",
     )# TODO: switch to hydra to specify the run name.
 
     model = GAIL(state_dim, action_dim, discrete, config).to(device)
