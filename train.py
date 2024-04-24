@@ -7,9 +7,10 @@ import torch
 import gym
 
 import wandb
+# wandb.login(key="0569aea85a4d43c84d0994c5ae88cc6d236faa5f")
 
 from models.nets import Expert
-from models.gail import GAIL
+from models.optimistic_tbs import GAIL
 
 
 def main(env_name):
@@ -62,21 +63,49 @@ def main(env_name):
         )
     )
 
-    # Initialise WandB
-    wandb.init(
-        project="GAIL_Project_{}".format(env_name),
-        tags=["GAIL"],
-        mode="disabled",
-    )# TODO: switch to hydra to specify the run name.
+    # # Initialise WandB
+    # wandb.init(
+    #     project="GAIL_Project_{}".format(env_name),
+    #     tags=["GAIL"],
+    #     mode="online",
+    # )# TODO: switch to hydra to specify the run name.
 
-    model = GAIL(state_dim, action_dim, discrete, config).to(device)
+    # model = GAIL(state_dim, action_dim, discrete, config).to(device)
 
-    results = model.train(env, expert)
+    # results = model.train(env, expert)
+
+    # Before starting the main loop
+    all_rewards = []
+    # Loop to repeat the experiment 8 times
+    for experiment in range(5):
+        # Initialise WandB
+        wandb.init(
+            project="GAIL_Project_{}".format(env_name),
+            tags=["GAIL_AC_opt_3"],
+            mode="offline",
+            group="experiment_AC_opt_3",
+            job_type="AC_opt_3"
+        )  # TODO: switch to hydra to specify the run name.
+
+        # Reset the environment and model for each experiment
+        env.reset()
+
+        model = GAIL(state_dim, action_dim, discrete, config).to(device)
+
+        # The train function returns the experiment's results, including rewards
+        results = model.train(env, expert)
+
+        # with open(os.path.join(ckpt_path, "results.pkl"), "wb") as f:
+        #     pickle.dump(results, f)
+
+        # Collect rewards from each iteration
+        # all_rewards.append(results[1])
+        wandb.finish()
 
     env.close()
 
-    with open(os.path.join(ckpt_path, "results.pkl"), "wb") as f:
-        pickle.dump(results, f)
+    # with open(os.path.join(ckpt_path, "results.pkl"), "wb") as f:
+    #     pickle.dump(results, f)
 
     if hasattr(model, "pi"):
         torch.save(
